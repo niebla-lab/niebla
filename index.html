@@ -89,27 +89,27 @@ canvas{max-height:300px;}
 .reg-info strong{color:var(--ink);}
 
 /* AUZO GRID */
-.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));
-  gap:0.6rem;margin-bottom:1.25rem;}
-.ac{border:1.5px solid var(--border);background:white;padding:0.8rem 0.7rem;
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:0.6rem;margin-bottom:1.5rem;}
+.ac{border:1.5px solid var(--border);background:white;padding:1rem 0.9rem;
   cursor:pointer;transition:all 0.15s;position:relative;}
 .ac:hover{border-color:var(--ink);transform:translateY(-2px);
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);}
 .ac.sel{border-color:var(--ink);background:var(--ink);}
-.ac-nm{font-family:'Playfair Display',serif;font-size:0.9rem;
-  display:block;margin-bottom:0.5rem;color:var(--ink);}
+.ac-nm{font-family:'Playfair Display',serif;font-size:1rem;
+  display:block;margin-bottom:0.6rem;color:var(--ink);}
 .ac.sel .ac-nm{color:var(--paper);}
 /* mini bar horizontal dins card */
-.ac-bars{display:flex;height:6px;gap:1px;border-radius:1px;overflow:hidden;}
+.ac-bars{display:flex;height:8px;gap:1px;border-radius:1px;overflow:hidden;margin-bottom:0.4rem;}
 .ac-seg{height:100%;}
 .ac-seg.G{background:var(--G);}
 .ac-seg.D{background:var(--D);}
 .ac-seg.A{background:var(--A);}
-.ac-pct{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
-  color:var(--muted);margin-top:0.3rem;}
+.ac-pct{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;
+  color:var(--muted);line-height:1.6;}
 .ac.sel .ac-pct{color:#aaa;}
-.ac-trend{position:absolute;top:0.5rem;right:0.5rem;font-size:0.65rem;
-  font-family:'IBM Plex Mono',monospace;}
+.ac-trend{position:absolute;top:0.6rem;right:0.6rem;font-size:0.68rem;
+  font-family:'IBM Plex Mono',monospace;font-weight:500;}
 
 /* AUZO DETAIL */
 .ad{background:white;border:1px solid var(--border);
@@ -205,8 +205,8 @@ canvas{max-height:300px;}
   <div class="hd">
     <div class="hd-k">Auzoka · Eskola publikoa</div>
     <div class="hd-t">Auzo bat aukeratu</div>
-    <p class="hd-s">Barra horizontalak: G (gorri), A (urdin), D (berde) proportzioa 2024an.
-      Joera 2024→2029 parentesian.</p>
+    <p class="hd-s">Barra koloreduna: G (gorria) · A (urdina) · D (berdea) proportzioa 2024an.
+      Klikatu auzo batean xehetasuna ikusteko. D↑ gora joera, D↓ behera.</p>
   </div>
   <div class="ag" id="ag"></div>
   <div class="ad" id="ad" style="display:none">
@@ -362,9 +362,9 @@ function buildAG(){
     const dd=(r5.D-r0.D).toFixed(1);
     const c=document.createElement('div');
     c.className='ac'+(nom===auzoK?' sel':'');
-    const trendCls=dd>=0?'arr-dn':'arr-up';
+    const trendCls=parseFloat(dd)>=0?'arr-dn':'arr-up';
     c.innerHTML=`
-      <span class="ac-trend"><span class="${trendCls}">D${dd>=0?'↑':'↓'}${Math.abs(dd)}</span></span>
+      <span class="ac-trend"><span class="${trendCls}">D${parseFloat(dd)>=0?'↑':'↓'}${Math.abs(dd)}</span></span>
       <span class="ac-nm">${nom}</span>
       <div class="ac-bars">
         <div class="ac-seg G" style="width:${r0.G}%"></div>
@@ -375,7 +375,8 @@ function buildAG(){
     c.onclick=()=>selAuzo(nom);
     g.appendChild(c);
   });
-  if(auzoK) showDet(auzoK);
+  // Beti erakutsi xehetasuna
+  showDet(auzoK);
 }
 
 function selAuzo(nom){
@@ -454,7 +455,8 @@ function showDet(nom){
   ta.appendChild(tb2);
 }
 
-// Init
+// Init — lehenengo auzoa automatikoki aukeratu
+auzoK = Object.keys(DAT.auzoak)[0];
 buildI();
 </script>
 </body>
