@@ -20,17 +20,17 @@ body{background:var(--paper);color:var(--ink);
 
 /* NAV */
 nav{display:flex;align-items:stretch;border-bottom:2px solid var(--ink);
-  background:var(--paper);position:sticky;top:0;z-index:30;height:48px;}
+  background:var(--paper);position:sticky;top:0;z-index:30;height:56px;}
 .brand{padding:0 1.25rem;display:flex;align-items:center;
   font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;
   color:var(--accent);border-right:1px solid var(--border);white-space:nowrap;}
-.tabs{display:flex;}
-.tb{padding:0 1.25rem;border:none;background:none;cursor:pointer;height:100%;
-  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;
+.tabs{display:flex;gap:4px;padding:0 0.5rem;align-items:center;}
+.tb{padding:0 1.5rem;border:none;background:none;cursor:pointer;height:40px;
+  font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;
   text-transform:uppercase;color:var(--muted);
-  border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
-.tb:hover{color:var(--ink);}
-.tb.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:500;}
+  border-radius:3px;transition:all 0.15s;}
+.tb:hover{color:var(--ink);background:#e8e4d8;}
+.tb.on{color:var(--paper);background:var(--ink);font-weight:500;}
 .nav-r{margin-left:auto;display:flex;align-items:center;padding:0 1rem;
   font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--muted);}
 
@@ -204,11 +204,39 @@ canvas{max-height:300px;}
 <div class="vw" id="va">
   <div class="hd">
     <div class="hd-k">Auzoka · Eskola publikoa</div>
-    <div class="hd-t">Auzo bat aukeratu</div>
-    <p class="hd-s">Barra koloreduna: G (gorria) · A (urdina) · D (berdea) proportzioa 2024an.
-      Klikatu auzo batean xehetasuna ikusteko. D↑ gora joera, D↓ behera.</p>
+    <div class="hd-t">Iruñea — auzo bat aukeratu mapan</div>
+    <p class="hd-s">Kolore-intentsitatea: D ereduaren proportzioa (zenbat eta berdexeagoa, orduan eta D gehiago).
+      Klikatu auzo batean xehetasuna ikusteko.</p>
   </div>
-  <div class="ag" id="ag"></div>
+
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:1.5rem;margin-bottom:1.5rem;align-items:start;">
+
+    <!-- MAPA SVG -->
+    <div style="background:white;border:1px solid var(--border);padding:1rem;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem;">
+        D eredua 2024 — kolore-intentsitatea
+      </div>
+      <!-- Legenda kolore-gradiente -->
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);">
+        <span>D baxua</span>
+        <div style="flex:1;height:8px;background:linear-gradient(to right,#e8e4d8,#1a5c38);border-radius:2px;"></div>
+        <span>D altua</span>
+      </div>
+      <svg id="mapa-svg" viewBox="0 0 490 385" style="width:100%;cursor:pointer;"
+           xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <!-- PANEL LATERAL — zerrenda -->
+    <div style="background:white;border:1px solid var(--border);padding:0.75rem;max-height:460px;overflow-y:auto;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;padding-bottom:0.4rem;
+        border-bottom:1px solid var(--border);">G → D ordenatua</div>
+      <div id="auzo-list"></div>
+    </div>
+
+  </div>
+
   <div class="ad" id="ad" style="display:none">
     <div class="ad-hd">
       <div>
@@ -226,13 +254,13 @@ canvas{max-height:300px;}
     <table class="tbl" id="tbl-a" style="margin-top:1rem;"></table>
   </div>
   <div class="oha">
-    Barra horizontala: proportzioa 2024an (G+A+D=100%). Joera: aldaketa 2024→2029 portzentaje-puntutan.<br>
-    Immigrazio gehien: Rotxapea (%16.5) eta Milagrosa (%18.3). Euskaltzaletasun altuena: Lezkairu (68) eta Alde Zaharra (72).
+    Kolore-intentsitatea: D ereduaren proportzioa 2024an. Joera: aldaketa 2024→2029 portzentaje-puntutan.<br>
+    Immigrazio gehien: Rotxapea (%16.5) eta Milagrosa (%18.3). Euskaltzaletasun altuena: Lezkairu eta Alde Zaharra.
   </div>
 </div>
 
 <script>
-const DAT = {"irunea": [{"y": 2024, "ik": 1217, "D": 17.91, "A": 22.93, "G": 59.0, "Dabs": 218, "Aabs": 279, "Gabs": 718, "pop": 209060, "pct_ex": 15.49}, {"y": 2025, "ik": 1159, "D": 18.38, "A": 22.86, "G": 59.02, "Dabs": 213, "Aabs": 265, "Gabs": 684, "pop": 210769, "pct_ex": 15.69}, {"y": 2026, "ik": 1100, "D": 18.55, "A": 22.45, "G": 58.73, "Dabs": 204, "Aabs": 247, "Gabs": 646, "pop": 212478, "pct_ex": 15.88}, {"y": 2027, "ik": 1042, "D": 19.0, "A": 22.36, "G": 58.64, "Dabs": 198, "Aabs": 233, "Gabs": 611, "pop": 214186, "pct_ex": 16.07}, {"y": 2028, "ik": 1019, "D": 19.33, "A": 22.28, "G": 58.39, "Dabs": 197, "Aabs": 227, "Gabs": 595, "pop": 215895, "pct_ex": 16.27}, {"y": 2029, "ik": 1019, "D": 19.63, "A": 22.18, "G": 58.39, "Dabs": 200, "Aabs": 226, "Gabs": 595, "pop": 217604, "pct_ex": 16.46}], "auzoak": {"Alde Zaharra": [{"y": 2024, "pop": 5800, "ex": 14.1, "ik": 34, "D": 23.11, "A": 20.93, "G": 55.96, "Dabs": 8, "Aabs": 7, "Gabs": 19}, {"y": 2025, "pop": 5850, "ex": 14.29, "ik": 32, "D": 23.46, "A": 20.74, "G": 55.79, "Dabs": 8, "Aabs": 7, "Gabs": 18}, {"y": 2026, "pop": 5900, "ex": 14.49, "ik": 31, "D": 23.82, "A": 20.56, "G": 55.62, "Dabs": 7, "Aabs": 6, "Gabs": 17}, {"y": 2027, "pop": 5950, "ex": 14.68, "ik": 30, "D": 24.17, "A": 20.37, "G": 55.46, "Dabs": 7, "Aabs": 6, "Gabs": 17}, {"y": 2028, "pop": 6000, "ex": 14.87, "ik": 29, "D": 24.52, "A": 20.19, "G": 55.29, "Dabs": 7, "Aabs": 6, "Gabs": 16}, {"y": 2029, "pop": 6050, "ex": 15.07, "ik": 29, "D": 24.88, "A": 20.01, "G": 55.12, "Dabs": 7, "Aabs": 6, "Gabs": 16}], "Ensantzea": [{"y": 2024, "pop": 18200, "ex": 13.8, "ik": 106, "D": 19.34, "A": 22.3, "G": 58.36, "Dabs": 21, "Aabs": 24, "Gabs": 62}, {"y": 2025, "pop": 18350, "ex": 13.99, "ik": 102, "D": 19.69, "A": 22.12, "G": 58.19, "Dabs": 20, "Aabs": 23, "Gabs": 59}, {"y": 2026, "pop": 18500, "ex": 14.19, "ik": 97, "D": 20.05, "A": 21.93, "G": 58.02, "Dabs": 19, "Aabs": 21, "Gabs": 56}, {"y": 2027, "pop": 18650, "ex": 14.38, "ik": 93, "D": 20.4, "A": 21.75, "G": 57.85, "Dabs": 19, "Aabs": 20, "Gabs": 54}, {"y": 2028, "pop": 18800, "ex": 14.57, "ik": 92, "D": 20.75, "A": 21.57, "G": 57.68, "Dabs": 19, "Aabs": 20, "Gabs": 53}, {"y": 2029, "pop": 18950, "ex": 14.77, "ik": 92, "D": 21.11, "A": 21.38, "G": 57.51, "Dabs": 19, "Aabs": 20, "Gabs": 53}], "San Juan": [{"y": 2024, "pop": 19000, "ex": 13.3, "ik": 111, "D": 15.95, "A": 23.56, "G": 60.49, "Dabs": 18, "Aabs": 26, "Gabs": 67}, {"y": 2025, "pop": 18929, "ex": 13.49, "ik": 105, "D": 16.3, "A": 23.38, "G": 60.32, "Dabs": 17, "Aabs": 25, "Gabs": 63}, {"y": 2026, "pop": 18858, "ex": 13.69, "ik": 99, "D": 16.66, "A": 23.19, "G": 60.15, "Dabs": 16, "Aabs": 23, "Gabs": 60}, {"y": 2027, "pop": 18787, "ex": 13.88, "ik": 94, "D": 17.01, "A": 23.01, "G": 59.98, "Dabs": 16, "Aabs": 22, "Gabs": 56}, {"y": 2028, "pop": 18716, "ex": 14.07, "ik": 91, "D": 17.36, "A": 22.83, "G": 59.81, "Dabs": 16, "Aabs": 21, "Gabs": 54}, {"y": 2029, "pop": 18645, "ex": 14.27, "ik": 91, "D": 17.72, "A": 22.64, "G": 59.64, "Dabs": 16, "Aabs": 21, "Gabs": 54}], "San Jorge": [{"y": 2024, "pop": 16500, "ex": 17.6, "ik": 96, "D": 12.96, "A": 24.21, "G": 62.83, "Dabs": 12, "Aabs": 23, "Gabs": 60}, {"y": 2025, "pop": 16580, "ex": 17.79, "ik": 92, "D": 13.31, "A": 24.02, "G": 62.66, "Dabs": 12, "Aabs": 22, "Gabs": 58}, {"y": 2026, "pop": 16660, "ex": 17.99, "ik": 88, "D": 13.67, "A": 23.84, "G": 62.49, "Dabs": 12, "Aabs": 21, "Gabs": 55}, {"y": 2027, "pop": 16740, "ex": 18.18, "ik": 83, "D": 14.02, "A": 23.65, "G": 62.33, "Dabs": 12, "Aabs": 20, "Gabs": 52}, {"y": 2028, "pop": 16820, "ex": 18.37, "ik": 82, "D": 14.37, "A": 23.47, "G": 62.16, "Dabs": 12, "Aabs": 19, "Gabs": 51}, {"y": 2029, "pop": 16900, "ex": 18.57, "ik": 82, "D": 14.73, "A": 23.29, "G": 61.99, "Dabs": 12, "Aabs": 19, "Gabs": 51}], "Iturrama": [{"y": 2024, "pop": 21800, "ex": 13.3, "ik": 127, "D": 16.79, "A": 23.26, "G": 59.95, "Dabs": 21, "Aabs": 30, "Gabs": 76}, {"y": 2025, "pop": 21635, "ex": 13.49, "ik": 120, "D": 17.14, "A": 23.08, "G": 59.78, "Dabs": 21, "Aabs": 28, "Gabs": 72}, {"y": 2026, "pop": 21470, "ex": 13.69, "ik": 113, "D": 17.5, "A": 22.89, "G": 59.61, "Dabs": 20, "Aabs": 26, "Gabs": 67}, {"y": 2027, "pop": 21305, "ex": 13.88, "ik": 106, "D": 17.85, "A": 22.71, "G": 59.44, "Dabs": 19, "Aabs": 24, "Gabs": 63}, {"y": 2028, "pop": 21140, "ex": 14.07, "ik": 103, "D": 18.2, "A": 22.53, "G": 59.27, "Dabs": 19, "Aabs": 23, "Gabs": 61}, {"y": 2029, "pop": 20975, "ex": 14.27, "ik": 102, "D": 18.56, "A": 22.34, "G": 59.1, "Dabs": 19, "Aabs": 23, "Gabs": 60}], "Txantrea": [{"y": 2024, "pop": 20200, "ex": 12.8, "ik": 118, "D": 19.0, "A": 22.52, "G": 58.48, "Dabs": 22, "Aabs": 27, "Gabs": 69}, {"y": 2025, "pop": 20042, "ex": 12.99, "ik": 111, "D": 19.35, "A": 22.34, "G": 58.31, "Dabs": 21, "Aabs": 25, "Gabs": 65}, {"y": 2026, "pop": 19884, "ex": 13.19, "ik": 105, "D": 19.71, "A": 22.15, "G": 58.14, "Dabs": 21, "Aabs": 23, "Gabs": 61}, {"y": 2027, "pop": 19726, "ex": 13.38, "ik": 98, "D": 20.06, "A": 21.97, "G": 57.97, "Dabs": 20, "Aabs": 22, "Gabs": 57}, {"y": 2028, "pop": 19568, "ex": 13.57, "ik": 95, "D": 20.41, "A": 21.79, "G": 57.8, "Dabs": 19, "Aabs": 21, "Gabs": 55}, {"y": 2029, "pop": 19410, "ex": 13.77, "ik": 94, "D": 20.77, "A": 21.6, "G": 57.63, "Dabs": 20, "Aabs": 20, "Gabs": 54}], "Rotxapea": [{"y": 2024, "pop": 26700, "ex": 16.5, "ik": 156, "D": 16.31, "A": 23.12, "G": 60.57, "Dabs": 25, "Aabs": 36, "Gabs": 94}, {"y": 2025, "pop": 26469, "ex": 16.69, "ik": 147, "D": 16.66, "A": 22.94, "G": 60.4, "Dabs": 24, "Aabs": 34, "Gabs": 89}, {"y": 2026, "pop": 26238, "ex": 16.89, "ik": 138, "D": 17.02, "A": 22.75, "G": 60.23, "Dabs": 23, "Aabs": 31, "Gabs": 83}, {"y": 2027, "pop": 26007, "ex": 17.08, "ik": 129, "D": 17.37, "A": 22.57, "G": 60.06, "Dabs": 22, "Aabs": 29, "Gabs": 77}, {"y": 2028, "pop": 25776, "ex": 17.27, "ik": 125, "D": 17.72, "A": 22.38, "G": 59.9, "Dabs": 22, "Aabs": 28, "Gabs": 75}, {"y": 2029, "pop": 25545, "ex": 17.47, "ik": 124, "D": 18.08, "A": 22.2, "G": 59.73, "Dabs": 22, "Aabs": 28, "Gabs": 74}], "Milagrosa": [{"y": 2024, "pop": 22100, "ex": 18.3, "ik": 129, "D": 11.49, "A": 24.66, "G": 63.85, "Dabs": 15, "Aabs": 32, "Gabs": 82}, {"y": 2025, "pop": 22155, "ex": 18.49, "ik": 123, "D": 11.84, "A": 24.48, "G": 63.68, "Dabs": 15, "Aabs": 30, "Gabs": 78}, {"y": 2026, "pop": 22210, "ex": 18.69, "ik": 117, "D": 12.2, "A": 24.29, "G": 63.51, "Dabs": 14, "Aabs": 28, "Gabs": 74}, {"y": 2027, "pop": 22265, "ex": 18.88, "ik": 111, "D": 12.55, "A": 24.11, "G": 63.34, "Dabs": 14, "Aabs": 27, "Gabs": 70}, {"y": 2028, "pop": 22320, "ex": 19.07, "ik": 109, "D": 12.9, "A": 23.93, "G": 63.17, "Dabs": 14, "Aabs": 26, "Gabs": 69}, {"y": 2029, "pop": 22375, "ex": 19.27, "ik": 109, "D": 13.26, "A": 23.74, "G": 63.0, "Dabs": 14, "Aabs": 26, "Gabs": 69}], "Mendillorri": [{"y": 2024, "pop": 13800, "ex": 9.9, "ik": 80, "D": 22.41, "A": 21.59, "G": 56.0, "Dabs": 18, "Aabs": 17, "Gabs": 45}, {"y": 2025, "pop": 13978, "ex": 10.09, "ik": 78, "D": 22.76, "A": 21.41, "G": 55.83, "Dabs": 18, "Aabs": 17, "Gabs": 44}, {"y": 2026, "pop": 14156, "ex": 10.29, "ik": 74, "D": 23.12, "A": 21.22, "G": 55.66, "Dabs": 17, "Aabs": 16, "Gabs": 41}, {"y": 2027, "pop": 14334, "ex": 10.48, "ik": 71, "D": 23.47, "A": 21.04, "G": 55.49, "Dabs": 17, "Aabs": 15, "Gabs": 39}, {"y": 2028, "pop": 14512, "ex": 10.67, "ik": 71, "D": 23.82, "A": 20.85, "G": 55.32, "Dabs": 17, "Aabs": 15, "Gabs": 39}, {"y": 2029, "pop": 14690, "ex": 10.87, "ik": 72, "D": 24.18, "A": 20.67, "G": 55.15, "Dabs": 17, "Aabs": 15, "Gabs": 40}], "Lezkairu": [{"y": 2024, "pop": 11200, "ex": 8.8, "ik": 65, "D": 24.64, "A": 20.9, "G": 54.46, "Dabs": 16, "Aabs": 14, "Gabs": 35}, {"y": 2025, "pop": 11385, "ex": 8.99, "ik": 63, "D": 24.99, "A": 20.72, "G": 54.29, "Dabs": 16, "Aabs": 13, "Gabs": 34}, {"y": 2026, "pop": 11570, "ex": 9.19, "ik": 61, "D": 25.35, "A": 20.53, "G": 54.12, "Dabs": 15, "Aabs": 13, "Gabs": 33}, {"y": 2027, "pop": 11755, "ex": 9.38, "ik": 59, "D": 25.7, "A": 20.35, "G": 53.95, "Dabs": 15, "Aabs": 12, "Gabs": 32}, {"y": 2028, "pop": 11940, "ex": 9.57, "ik": 58, "D": 26.05, "A": 20.17, "G": 53.78, "Dabs": 15, "Aabs": 12, "Gabs": 31}, {"y": 2029, "pop": 12125, "ex": 9.77, "ik": 59, "D": 26.41, "A": 19.98, "G": 53.61, "Dabs": 16, "Aabs": 12, "Gabs": 32}], "Etxabakoitz": [{"y": 2024, "pop": 9800, "ex": 11.2, "ik": 57, "D": 21.2, "A": 21.9, "G": 56.9, "Dabs": 12, "Aabs": 12, "Gabs": 32}, {"y": 2025, "pop": 9918, "ex": 11.39, "ik": 55, "D": 21.55, "A": 21.71, "G": 56.74, "Dabs": 12, "Aabs": 12, "Gabs": 31}, {"y": 2026, "pop": 10036, "ex": 11.59, "ik": 53, "D": 21.91, "A": 21.53, "G": 56.57, "Dabs": 12, "Aabs": 11, "Gabs": 30}, {"y": 2027, "pop": 10154, "ex": 11.78, "ik": 51, "D": 22.26, "A": 21.34, "G": 56.4, "Dabs": 11, "Aabs": 11, "Gabs": 29}, {"y": 2028, "pop": 10272, "ex": 11.97, "ik": 50, "D": 22.61, "A": 21.16, "G": 56.23, "Dabs": 11, "Aabs": 11, "Gabs": 28}, {"y": 2029, "pop": 10390, "ex": 12.17, "ik": 51, "D": 22.97, "A": 20.97, "G": 56.06, "Dabs": 12, "Aabs": 11, "Gabs": 29}], "Azpilagaña": [{"y": 2024, "pop": 7200, "ex": 9.4, "ik": 42, "D": 19.3, "A": 22.75, "G": 57.95, "Dabs": 8, "Aabs": 10, "Gabs": 24}, {"y": 2025, "pop": 7185, "ex": 9.59, "ik": 40, "D": 19.65, "A": 22.57, "G": 57.78, "Dabs": 8, "Aabs": 9, "Gabs": 23}, {"y": 2026, "pop": 7170, "ex": 9.79, "ik": 38, "D": 20.01, "A": 22.38, "G": 57.61, "Dabs": 8, "Aabs": 9, "Gabs": 22}, {"y": 2027, "pop": 7155, "ex": 9.98, "ik": 36, "D": 20.36, "A": 22.2, "G": 57.44, "Dabs": 7, "Aabs": 8, "Gabs": 21}, {"y": 2028, "pop": 7140, "ex": 10.17, "ik": 35, "D": 20.71, "A": 22.01, "G": 57.27, "Dabs": 7, "Aabs": 8, "Gabs": 20}, {"y": 2029, "pop": 7125, "ex": 10.37, "ik": 35, "D": 21.07, "A": 21.83, "G": 57.1, "Dabs": 7, "Aabs": 8, "Gabs": 20}], "Ermitagaña": [{"y": 2024, "pop": 16400, "ex": 5.2, "ik": 96, "D": 22.8, "A": 21.92, "G": 55.28, "Dabs": 22, "Aabs": 21, "Gabs": 53}, {"y": 2025, "pop": 16360, "ex": 5.39, "ik": 91, "D": 23.15, "A": 21.73, "G": 55.12, "Dabs": 21, "Aabs": 20, "Gabs": 50}, {"y": 2026, "pop": 16320, "ex": 5.59, "ik": 86, "D": 23.51, "A": 21.55, "G": 54.95, "Dabs": 20, "Aabs": 19, "Gabs": 47}, {"y": 2027, "pop": 16280, "ex": 5.78, "ik": 81, "D": 23.86, "A": 21.36, "G": 54.78, "Dabs": 19, "Aabs": 17, "Gabs": 44}, {"y": 2028, "pop": 16240, "ex": 5.97, "ik": 79, "D": 24.21, "A": 21.18, "G": 54.61, "Dabs": 19, "Aabs": 17, "Gabs": 43}, {"y": 2029, "pop": 16200, "ex": 6.17, "ik": 79, "D": 24.57, "A": 20.99, "G": 54.44, "Dabs": 19, "Aabs": 17, "Gabs": 43}]}, "meta": {"reg_jaiotzak": {"slope": -204.9, "intercept": 5833.0, "r2": 0.975}, "reg_biztanleria": {"slope": 1709.0, "intercept": 202225.0, "r2": 0.717}, "reg_immigrazio_pct": {"slope": 0.194, "intercept": 15.1}}};
+const DAT = {"irunea": [{"y": 2024, "ik": 1217, "D": 17.91, "A": 22.93, "G": 59.0, "Dabs": 218, "Aabs": 279, "Gabs": 718, "pop": 209061, "pct_ex": 15.49}, {"y": 2025, "ik": 1159, "D": 18.12, "A": 22.86, "G": 59.28, "Dabs": 210, "Aabs": 265, "Gabs": 687, "pop": 210770, "pct_ex": 15.68}, {"y": 2026, "ik": 1100, "D": 17.82, "A": 22.55, "G": 59.45, "Dabs": 196, "Aabs": 248, "Gabs": 654, "pop": 212479, "pct_ex": 15.88}, {"y": 2027, "ik": 1042, "D": 17.75, "A": 22.55, "G": 59.6, "Dabs": 185, "Aabs": 235, "Gabs": 621, "pop": 214188, "pct_ex": 16.07}, {"y": 2028, "ik": 1019, "D": 17.76, "A": 22.67, "G": 59.57, "Dabs": 181, "Aabs": 231, "Gabs": 607, "pop": 215897, "pct_ex": 16.26}, {"y": 2029, "ik": 1019, "D": 17.66, "A": 22.57, "G": 59.86, "Dabs": 180, "Aabs": 230, "Gabs": 610, "pop": 217606, "pct_ex": 16.46}], "auzoak": {"Alde Zaharra": [{"y": 2024, "pop": 5800, "ex": 14.1, "ik": 34, "D": 23.11, "A": 20.93, "G": 55.96, "Dabs": 8, "Aabs": 7, "Gabs": 19}, {"y": 2025, "pop": 5850, "ex": 14.9, "ik": 32, "D": 23.31, "A": 20.57, "G": 56.12, "Dabs": 7, "Aabs": 7, "Gabs": 18}, {"y": 2026, "pop": 5900, "ex": 15.7, "ik": 31, "D": 23.51, "A": 20.22, "G": 56.27, "Dabs": 7, "Aabs": 6, "Gabs": 17}, {"y": 2027, "pop": 5950, "ex": 16.5, "ik": 30, "D": 23.71, "A": 19.86, "G": 56.43, "Dabs": 7, "Aabs": 6, "Gabs": 17}, {"y": 2028, "pop": 6000, "ex": 17.3, "ik": 29, "D": 23.91, "A": 19.5, "G": 56.59, "Dabs": 7, "Aabs": 6, "Gabs": 16}, {"y": 2029, "pop": 6050, "ex": 18.1, "ik": 29, "D": 24.11, "A": 19.15, "G": 56.74, "Dabs": 7, "Aabs": 6, "Gabs": 16}], "Ensantxea": [{"y": 2024, "pop": 18200, "ex": 13.8, "ik": 106, "D": 19.34, "A": 22.3, "G": 58.36, "Dabs": 21, "Aabs": 24, "Gabs": 62}, {"y": 2025, "pop": 18350, "ex": 14.6, "ik": 102, "D": 19.34, "A": 22.15, "G": 58.51, "Dabs": 20, "Aabs": 23, "Gabs": 60}, {"y": 2026, "pop": 18500, "ex": 15.4, "ik": 97, "D": 19.34, "A": 21.99, "G": 58.67, "Dabs": 19, "Aabs": 21, "Gabs": 57}, {"y": 2027, "pop": 18650, "ex": 16.2, "ik": 93, "D": 19.34, "A": 21.84, "G": 58.82, "Dabs": 18, "Aabs": 20, "Gabs": 55}, {"y": 2028, "pop": 18800, "ex": 17.0, "ik": 92, "D": 19.34, "A": 21.68, "G": 58.98, "Dabs": 18, "Aabs": 20, "Gabs": 54}, {"y": 2029, "pop": 18950, "ex": 17.8, "ik": 92, "D": 19.34, "A": 21.52, "G": 59.14, "Dabs": 18, "Aabs": 20, "Gabs": 54}], "San Juan": [{"y": 2024, "pop": 19000, "ex": 13.3, "ik": 111, "D": 15.95, "A": 23.56, "G": 60.49, "Dabs": 18, "Aabs": 26, "Gabs": 67}, {"y": 2025, "pop": 18929, "ex": 14.1, "ik": 105, "D": 15.75, "A": 23.61, "G": 60.64, "Dabs": 17, "Aabs": 25, "Gabs": 64}, {"y": 2026, "pop": 18858, "ex": 14.9, "ik": 99, "D": 15.55, "A": 23.65, "G": 60.8, "Dabs": 15, "Aabs": 23, "Gabs": 60}, {"y": 2027, "pop": 18787, "ex": 15.7, "ik": 94, "D": 15.35, "A": 23.7, "G": 60.95, "Dabs": 14, "Aabs": 22, "Gabs": 57}, {"y": 2028, "pop": 18716, "ex": 16.5, "ik": 91, "D": 15.15, "A": 23.74, "G": 61.11, "Dabs": 14, "Aabs": 22, "Gabs": 56}, {"y": 2029, "pop": 18645, "ex": 17.3, "ik": 91, "D": 14.95, "A": 23.78, "G": 61.27, "Dabs": 14, "Aabs": 22, "Gabs": 56}], "San Jorge": [{"y": 2024, "pop": 16500, "ex": 17.6, "ik": 96, "D": 12.96, "A": 24.21, "G": 62.83, "Dabs": 12, "Aabs": 23, "Gabs": 60}, {"y": 2025, "pop": 16580, "ex": 18.4, "ik": 92, "D": 12.66, "A": 24.35, "G": 62.99, "Dabs": 12, "Aabs": 22, "Gabs": 58}, {"y": 2026, "pop": 16660, "ex": 19.2, "ik": 88, "D": 12.36, "A": 24.5, "G": 63.14, "Dabs": 11, "Aabs": 22, "Gabs": 56}, {"y": 2027, "pop": 16740, "ex": 20.0, "ik": 83, "D": 12.06, "A": 24.64, "G": 63.3, "Dabs": 10, "Aabs": 20, "Gabs": 53}, {"y": 2028, "pop": 16820, "ex": 20.8, "ik": 82, "D": 11.76, "A": 24.78, "G": 63.46, "Dabs": 10, "Aabs": 20, "Gabs": 52}, {"y": 2029, "pop": 16900, "ex": 21.6, "ik": 82, "D": 11.46, "A": 24.93, "G": 63.61, "Dabs": 9, "Aabs": 20, "Gabs": 52}], "Iturrama": [{"y": 2024, "pop": 21800, "ex": 13.3, "ik": 127, "D": 16.79, "A": 23.26, "G": 59.95, "Dabs": 21, "Aabs": 30, "Gabs": 76}, {"y": 2025, "pop": 21635, "ex": 14.1, "ik": 120, "D": 16.59, "A": 23.31, "G": 60.1, "Dabs": 20, "Aabs": 28, "Gabs": 72}, {"y": 2026, "pop": 21470, "ex": 14.9, "ik": 113, "D": 16.39, "A": 23.35, "G": 60.26, "Dabs": 19, "Aabs": 26, "Gabs": 68}, {"y": 2027, "pop": 21305, "ex": 15.7, "ik": 106, "D": 16.19, "A": 23.4, "G": 60.41, "Dabs": 17, "Aabs": 25, "Gabs": 64}, {"y": 2028, "pop": 21140, "ex": 16.5, "ik": 103, "D": 15.99, "A": 23.44, "G": 60.57, "Dabs": 16, "Aabs": 24, "Gabs": 62}, {"y": 2029, "pop": 20975, "ex": 17.3, "ik": 102, "D": 15.79, "A": 23.48, "G": 60.73, "Dabs": 16, "Aabs": 24, "Gabs": 62}], "Txantrea": [{"y": 2024, "pop": 20200, "ex": 12.8, "ik": 118, "D": 19.0, "A": 22.52, "G": 58.48, "Dabs": 22, "Aabs": 27, "Gabs": 69}, {"y": 2025, "pop": 20042, "ex": 13.6, "ik": 111, "D": 19.0, "A": 22.37, "G": 58.63, "Dabs": 21, "Aabs": 25, "Gabs": 65}, {"y": 2026, "pop": 19884, "ex": 14.4, "ik": 105, "D": 19.0, "A": 22.21, "G": 58.79, "Dabs": 20, "Aabs": 23, "Gabs": 62}, {"y": 2027, "pop": 19726, "ex": 15.2, "ik": 98, "D": 19.0, "A": 22.06, "G": 58.94, "Dabs": 19, "Aabs": 22, "Gabs": 58}, {"y": 2028, "pop": 19568, "ex": 16.0, "ik": 95, "D": 19.0, "A": 21.9, "G": 59.1, "Dabs": 18, "Aabs": 21, "Gabs": 56}, {"y": 2029, "pop": 19410, "ex": 16.8, "ik": 94, "D": 19.0, "A": 21.74, "G": 59.26, "Dabs": 18, "Aabs": 20, "Gabs": 56}], "Rotxapea": [{"y": 2024, "pop": 26700, "ex": 16.5, "ik": 156, "D": 16.31, "A": 23.12, "G": 60.57, "Dabs": 25, "Aabs": 36, "Gabs": 94}, {"y": 2025, "pop": 26469, "ex": 17.3, "ik": 147, "D": 16.01, "A": 23.26, "G": 60.73, "Dabs": 24, "Aabs": 34, "Gabs": 89}, {"y": 2026, "pop": 26238, "ex": 18.1, "ik": 138, "D": 15.71, "A": 23.41, "G": 60.88, "Dabs": 22, "Aabs": 32, "Gabs": 84}, {"y": 2027, "pop": 26007, "ex": 18.9, "ik": 129, "D": 15.41, "A": 23.55, "G": 61.04, "Dabs": 20, "Aabs": 30, "Gabs": 79}, {"y": 2028, "pop": 25776, "ex": 19.7, "ik": 125, "D": 15.11, "A": 23.7, "G": 61.19, "Dabs": 19, "Aabs": 30, "Gabs": 76}, {"y": 2029, "pop": 25545, "ex": 20.5, "ik": 124, "D": 14.81, "A": 23.84, "G": 61.35, "Dabs": 18, "Aabs": 30, "Gabs": 76}], "Milagrosa": [{"y": 2024, "pop": 22100, "ex": 18.3, "ik": 129, "D": 11.49, "A": 24.66, "G": 63.85, "Dabs": 15, "Aabs": 32, "Gabs": 82}, {"y": 2025, "pop": 22155, "ex": 19.1, "ik": 123, "D": 10.99, "A": 25.01, "G": 64.0, "Dabs": 14, "Aabs": 31, "Gabs": 79}, {"y": 2026, "pop": 22210, "ex": 19.9, "ik": 117, "D": 10.49, "A": 25.35, "G": 64.16, "Dabs": 12, "Aabs": 30, "Gabs": 75}, {"y": 2027, "pop": 22265, "ex": 20.7, "ik": 111, "D": 10.0, "A": 25.69, "G": 64.31, "Dabs": 11, "Aabs": 29, "Gabs": 71}, {"y": 2028, "pop": 22320, "ex": 21.5, "ik": 109, "D": 10.0, "A": 25.53, "G": 64.47, "Dabs": 11, "Aabs": 28, "Gabs": 70}, {"y": 2029, "pop": 22375, "ex": 22.3, "ik": 109, "D": 10.0, "A": 25.37, "G": 64.63, "Dabs": 11, "Aabs": 28, "Gabs": 70}], "Mendillorri": [{"y": 2024, "pop": 13800, "ex": 9.9, "ik": 80, "D": 22.41, "A": 21.59, "G": 56.0, "Dabs": 18, "Aabs": 17, "Gabs": 45}, {"y": 2025, "pop": 13978, "ex": 10.7, "ik": 78, "D": 22.71, "A": 21.14, "G": 56.15, "Dabs": 18, "Aabs": 16, "Gabs": 44}, {"y": 2026, "pop": 14156, "ex": 11.5, "ik": 74, "D": 23.01, "A": 20.68, "G": 56.31, "Dabs": 17, "Aabs": 15, "Gabs": 42}, {"y": 2027, "pop": 14334, "ex": 12.3, "ik": 71, "D": 23.31, "A": 20.22, "G": 56.47, "Dabs": 17, "Aabs": 14, "Gabs": 40}, {"y": 2028, "pop": 14512, "ex": 13.1, "ik": 71, "D": 23.61, "A": 19.77, "G": 56.62, "Dabs": 17, "Aabs": 14, "Gabs": 40}, {"y": 2029, "pop": 14690, "ex": 13.9, "ik": 72, "D": 23.91, "A": 19.31, "G": 56.78, "Dabs": 17, "Aabs": 14, "Gabs": 41}], "Lezkairu": [{"y": 2024, "pop": 11200, "ex": 8.8, "ik": 65, "D": 24.64, "A": 20.9, "G": 54.46, "Dabs": 16, "Aabs": 14, "Gabs": 35}, {"y": 2025, "pop": 11385, "ex": 9.6, "ik": 63, "D": 25.04, "A": 20.35, "G": 54.61, "Dabs": 16, "Aabs": 13, "Gabs": 34}, {"y": 2026, "pop": 11570, "ex": 10.4, "ik": 61, "D": 25.44, "A": 19.79, "G": 54.77, "Dabs": 16, "Aabs": 12, "Gabs": 33}, {"y": 2027, "pop": 11755, "ex": 11.2, "ik": 59, "D": 25.84, "A": 19.24, "G": 54.92, "Dabs": 15, "Aabs": 11, "Gabs": 32}, {"y": 2028, "pop": 11940, "ex": 12.0, "ik": 58, "D": 26.24, "A": 18.68, "G": 55.08, "Dabs": 15, "Aabs": 11, "Gabs": 32}, {"y": 2029, "pop": 12125, "ex": 12.8, "ik": 59, "D": 26.64, "A": 18.12, "G": 55.24, "Dabs": 16, "Aabs": 11, "Gabs": 33}], "Etxabakoitz": [{"y": 2024, "pop": 9800, "ex": 11.2, "ik": 57, "D": 21.2, "A": 21.9, "G": 56.9, "Dabs": 12, "Aabs": 12, "Gabs": 32}, {"y": 2025, "pop": 9918, "ex": 12.0, "ik": 55, "D": 21.3, "A": 21.64, "G": 57.06, "Dabs": 12, "Aabs": 12, "Gabs": 31}, {"y": 2026, "pop": 10036, "ex": 12.8, "ik": 53, "D": 21.4, "A": 21.38, "G": 57.22, "Dabs": 11, "Aabs": 11, "Gabs": 30}, {"y": 2027, "pop": 10154, "ex": 13.6, "ik": 51, "D": 21.5, "A": 21.13, "G": 57.37, "Dabs": 11, "Aabs": 11, "Gabs": 29}, {"y": 2028, "pop": 10272, "ex": 14.4, "ik": 50, "D": 21.6, "A": 20.87, "G": 57.53, "Dabs": 11, "Aabs": 10, "Gabs": 29}, {"y": 2029, "pop": 10390, "ex": 15.2, "ik": 51, "D": 21.7, "A": 20.62, "G": 57.68, "Dabs": 11, "Aabs": 11, "Gabs": 29}], "Azpilagaña": [{"y": 2024, "pop": 7200, "ex": 9.4, "ik": 42, "D": 19.3, "A": 22.75, "G": 57.95, "Dabs": 8, "Aabs": 10, "Gabs": 24}, {"y": 2025, "pop": 7185, "ex": 10.2, "ik": 40, "D": 19.2, "A": 22.7, "G": 58.1, "Dabs": 8, "Aabs": 9, "Gabs": 23}, {"y": 2026, "pop": 7170, "ex": 11.0, "ik": 38, "D": 19.1, "A": 22.64, "G": 58.26, "Dabs": 7, "Aabs": 9, "Gabs": 22}, {"y": 2027, "pop": 7155, "ex": 11.8, "ik": 36, "D": 19.0, "A": 22.58, "G": 58.42, "Dabs": 7, "Aabs": 8, "Gabs": 21}, {"y": 2028, "pop": 7140, "ex": 12.6, "ik": 35, "D": 18.9, "A": 22.53, "G": 58.57, "Dabs": 7, "Aabs": 8, "Gabs": 20}, {"y": 2029, "pop": 7125, "ex": 13.4, "ik": 35, "D": 18.8, "A": 22.47, "G": 58.73, "Dabs": 7, "Aabs": 8, "Gabs": 21}], "Ermitagaña": [{"y": 2024, "pop": 16400, "ex": 5.2, "ik": 96, "D": 22.8, "A": 21.92, "G": 55.28, "Dabs": 22, "Aabs": 21, "Gabs": 53}, {"y": 2025, "pop": 16360, "ex": 6.0, "ik": 91, "D": 22.9, "A": 21.66, "G": 55.44, "Dabs": 21, "Aabs": 20, "Gabs": 50}, {"y": 2026, "pop": 16320, "ex": 6.8, "ik": 86, "D": 23.0, "A": 21.4, "G": 55.6, "Dabs": 20, "Aabs": 18, "Gabs": 48}, {"y": 2027, "pop": 16280, "ex": 7.6, "ik": 81, "D": 23.1, "A": 21.15, "G": 55.75, "Dabs": 19, "Aabs": 17, "Gabs": 45}, {"y": 2028, "pop": 16240, "ex": 8.4, "ik": 79, "D": 23.2, "A": 20.89, "G": 55.91, "Dabs": 18, "Aabs": 17, "Gabs": 44}, {"y": 2029, "pop": 16200, "ex": 9.2, "ik": 79, "D": 23.3, "A": 20.64, "G": 56.06, "Dabs": 18, "Aabs": 16, "Gabs": 44}]}, "meta": {"reg_jaiotzak": {"slope": -204.9, "intercept": 5833, "r2": 0.975}, "reg_biztanleria": {"slope": 1709, "intercept": 202225, "r2": 0.717}, "reg_immigrazio_pct": {"slope": 0.194, "intercept": 15.1}}};
 const EDS = ['G','D','A'];
 const COL = {G:'#b5451b',D:'#1a5c38',A:'#3d5a80'};
 const NOM = {G:'G eredua',D:'D eredua',A:'A eredua'};
@@ -354,38 +382,155 @@ function buildRegInfo(){
 }
 
 // ── AUZOAK ───────────────────────────────────────────────────
-function buildAG(){
-  const g=document.getElementById('ag');
-  g.innerHTML='';
-  Object.keys(DAT.auzoak).forEach(nom=>{
-    const s=DAT.auzoak[nom], r0=s[0], r5=s[s.length-1];
-    const dd=(r5.D-r0.D).toFixed(1);
-    const c=document.createElement('div');
-    c.className='ac'+(nom===auzoK?' sel':'');
-    const trendCls=parseFloat(dd)>=0?'arr-dn':'arr-up';
-    c.innerHTML=`
-      <span class="ac-trend"><span class="${trendCls}">D${parseFloat(dd)>=0?'↑':'↓'}${Math.abs(dd)}</span></span>
-      <span class="ac-nm">${nom}</span>
-      <div class="ac-bars">
-        <div class="ac-seg G" style="width:${r0.G}%"></div>
-        <div class="ac-seg A" style="width:${r0.A}%"></div>
-        <div class="ac-seg D" style="width:${r0.D}%"></div>
-      </div>
-      <div class="ac-pct">G${r0.G}% A${r0.A}% D${r0.D}%</div>`;
-    c.onclick=()=>selAuzo(nom);
-    g.appendChild(c);
+// ── AUZOAK — MAPA ────────────────────────────────────────────
+// Iruñeko auzo koordenatuak — mapa errealetan oinarrituta
+// SVG 490x380 — Ipar=gora, Ekialde=eskuin
+const MAPA = {
+  "Rotxapea":      {x:185, y:15,  w:110, h:80},  // iparraldea, erdian
+  "Txantrea":      {x:330, y:15,  w:130, h:90},  // ipar-ekialdea ✓
+  "San Jorge":     {x:20,  y:15,  w:165, h:90},  // ipar-mendebaldea
+  "San Juan":      {x:20,  y:105, w:165, h:80},  // mendebaldea
+  "Alde Zaharra":  {x:185, y:95,  w:110, h:75},  // erdialdea
+  "Ensantxea":     {x:270, y:95,  w:90,  h:75},  // erdialdea, ekialdean
+  "Ermitagaña":    {x:20,  y:185, w:165, h:70},  // mendebaldea
+  "Iturrama":      {x:60,  y:280, w:130, h:70},  // hegoaldea, mendebaldea
+  "Azpilagaña":    {x:190, y:290, w:130, h:65},  // hegoaldea, erdian
+  "Milagrosa":     {x:295, y:225, w:110, h:80},  // hego-ekialdea
+  "Lezkairu":      {x:330, y:145, w:140, h:80},  // ekialdea
+  "Mendillorri":   {x:380, y:65,  w:100, h:80},  // ekialde-iparraldea
+  "Etxabakoitz":   {x:20,  y:255, w:140, h:70},  // hegoaldea, mendebaldea
+};
+
+function dColor(dPct) {
+  // D: 11% (Milagrosa) → 25% (Lezkairu)
+  const t = Math.max(0, Math.min(1, (dPct - 11) / 14));
+  const r = Math.round(232 - t * (232 - 26));
+  const g = Math.round(228 - t * (228 - 92));
+  const b = Math.round(216 - t * (216 - 56));
+  return `rgb(${r},${g},${b})`;
+}
+
+function buildAG() {
+  const svg = document.getElementById('mapa-svg');
+  svg.innerHTML = '';
+
+  // Fondo
+  const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bg.setAttribute('width','490'); bg.setAttribute('height','385');
+  bg.setAttribute('fill','#faf7f2'); svg.appendChild(bg);
+
+  // Arga ibaia — Rotxapea eta Txantrea banatzen ditu iparraldean
+  const ibai = document.createElementNS('http://www.w3.org/2000/svg','path');
+  ibai.setAttribute('d','M 0 92 Q 120 82 185 95 Q 240 105 295 95 Q 360 85 460 92');
+  ibai.setAttribute('fill','none');
+  ibai.setAttribute('stroke','#4a7a9b');
+  ibai.setAttribute('stroke-width','5');
+  ibai.setAttribute('opacity','0.3');
+  svg.appendChild(ibai);
+
+  // Ibai etiketa
+  const tibi = document.createElementNS('http://www.w3.org/2000/svg','text');
+  tibi.setAttribute('x','60'); tibi.setAttribute('y','82');
+  tibi.setAttribute('font-family','IBM Plex Mono,monospace');
+  tibi.setAttribute('font-size','8'); tibi.setAttribute('fill','#4a7a9b');
+  tibi.setAttribute('opacity','0.7'); tibi.textContent = 'Arga ibaia';
+  svg.appendChild(tibi);
+
+  // Ipar
+  const tN = document.createElementNS('http://www.w3.org/2000/svg','text');
+  tN.setAttribute('x','460'); tN.setAttribute('y','18');
+  tN.setAttribute('text-anchor','middle');
+  tN.setAttribute('font-family','IBM Plex Mono,monospace');
+  tN.setAttribute('font-size','10'); tN.setAttribute('fill','#8a7a68');
+  tN.textContent = 'N ↑'; svg.appendChild(tN);
+
+  Object.keys(MAPA).forEach(nom => {
+    const pos = MAPA[nom];
+    const r0 = DAT.auzoak[nom][0];
+    const r5 = DAT.auzoak[nom][DAT.auzoak[nom].length-1];
+    const isS = nom === auzoK;
+    const col = dColor(r0.D);
+    const dd = (r5.D - r0.D).toFixed(1);
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor = 'pointer';
+
+    // Rect
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', pos.x); rect.setAttribute('y', pos.y);
+    rect.setAttribute('width', pos.w); rect.setAttribute('height', pos.h);
+    rect.setAttribute('rx','3');
+    rect.setAttribute('fill', isS ? '#1a1208' : col);
+    rect.setAttribute('stroke', isS ? '#1a1208' : '#d4c9b0');
+    rect.setAttribute('stroke-width', isS ? '2.5' : '1');
+    g.appendChild(rect);
+
+    // Izena
+    const tx = pos.x + pos.w/2;
+    const ty = pos.y + pos.h/2 - 6;
+    const tnom = document.createElementNS('http://www.w3.org/2000/svg','text');
+    tnom.setAttribute('x', tx); tnom.setAttribute('y', ty);
+    tnom.setAttribute('text-anchor','middle');
+    tnom.setAttribute('font-family','IBM Plex Sans,sans-serif');
+    tnom.setAttribute('font-size', nom.length > 10 ? '9' : '10');
+    tnom.setAttribute('font-weight','400');
+    tnom.setAttribute('fill', isS ? '#f5f0e8' : '#1a1208');
+    // Izena bi lerratan banatu
+    const hitzak = nom.split(' ');
+    if(hitzak.length > 1 && nom.length > 9) {
+      const t1 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+      t1.setAttribute('x',tx); t1.setAttribute('dy','0');
+      t1.textContent = hitzak[0];
+      const t2 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+      t2.setAttribute('x',tx); t2.setAttribute('dy','12');
+      t2.textContent = hitzak.slice(1).join(' ');
+      tnom.appendChild(t1); tnom.appendChild(t2);
+    } else {
+      tnom.textContent = nom;
+    }
+    g.appendChild(tnom);
+
+    // D % eta joera
+    const tpct = document.createElementNS('http://www.w3.org/2000/svg','text');
+    tpct.setAttribute('x', tx); tpct.setAttribute('y', pos.y + pos.h - 7);
+    tpct.setAttribute('text-anchor','middle');
+    tpct.setAttribute('font-family','IBM Plex Mono,monospace');
+    tpct.setAttribute('font-size','9');
+    tpct.setAttribute('fill', isS ? '#a8d8a8' : '#1a5c38');
+    tpct.textContent = `D${r0.D}% ${parseFloat(dd)>=0?'↑':'↓'}${Math.abs(dd)}`;
+    g.appendChild(tpct);
+
+    g.onclick = () => selAuzo(nom);
+    svg.appendChild(g);
   });
-  // Beti erakutsi xehetasuna
+
+  // Zerrenda laterala
+  const list = document.getElementById('auzo-list');
+  const ordenatua = Object.keys(DAT.auzoak).sort((a,b) =>
+    DAT.auzoak[a][0].D - DAT.auzoak[b][0].D);
+  list.innerHTML = ordenatua.map(nom => {
+    const r0 = DAT.auzoak[nom][0];
+    const r5 = DAT.auzoak[nom][DAT.auzoak[nom].length-1];
+    const dd = (r5.D-r0.D).toFixed(1);
+    const isS = nom === auzoK;
+    return `<div onclick="selAuzo('${nom}')" style="
+      padding:0.4rem 0.5rem;cursor:pointer;border-radius:2px;margin-bottom:2px;
+      background:${isS?'#1a1208':'transparent'};
+      border-left:3px solid ${dColor(r0.D)};
+      transition:background 0.15s;">
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;
+        font-weight:${isS?'500':'300'};color:${isS?'#f5f0e8':'#1a1208'};">${nom}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;
+        color:${isS?'#a8d8a8':'#1a5c38'};">D${r0.D}% ${parseFloat(dd)>=0?'↑':'↓'}${Math.abs(dd)}pp</div>
+    </div>`;
+  }).join('');
+
   showDet(auzoK);
 }
 
 function selAuzo(nom){
   auzoK=nom;
-  document.querySelectorAll('.ac').forEach(c=>{
-    const n=c.querySelector('.ac-nm').textContent;
-    c.classList.toggle('sel',n===nom);
-  });
-  showDet(nom);
+  buildAG();
 }
 
 function showDet(nom){
