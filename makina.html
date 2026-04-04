@@ -3,26 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laino — Nire haurraren hezkuntza-eredua</title>
+<title>laino</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
-:root{
-  --ink:#1a1208;--paper:#f5f0e8;--muted:#8a7a68;
-  --border:#d4c9b0;--accent:#c8390a;
-  --D:#1a5c38;--A:#3d5a80;--G:#b5451b;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=Noto+Sans+Arabic:wght@300;400;500&display=swap');
+
+:root {
+  --ink:#1a1208; --paper:#f5f0e8; --muted:#8a7a68;
+  --border:#d4c9b0; --accent:#c8390a;
+  --D:#1a5c38; --A:#3d5a80; --G:#b5451b;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;
-  font-weight:300;min-height:100vh;padding:2.5rem 1.25rem 5rem;}
-.wrap{max-width:580px;margin:0 auto;}
+body{background:var(--paper);color:var(--ink);min-height:100vh;}
 
-.brand{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);
-  font-size:1rem;display:block;margin-bottom:1.5rem;}
+/* ── PANTAILA NAGUSIA: HIZKUNTZA AUKERAKETA ── */
+#lang-screen {
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:2rem;
+}
+.lang-brand {
+  font-family:'Playfair Display',serif;font-style:italic;
+  color:var(--accent);font-size:1.4rem;margin-bottom:3rem;
+  letter-spacing:0.05em;
+}
+.lang-grid {
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+  max-width:480px;width:100%;
+}
+.lang-btn {
+  border:1.5px solid var(--border);background:white;
+  padding:1.5rem 1rem;cursor:pointer;transition:all 0.15s;
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+.lang-btn:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.lang-name{font-size:1.1rem;font-weight:400;color:var(--ink);}
+.lang-native{font-size:0.8rem;color:var(--muted);}
+.lang-btn[data-lang="arab"] .lang-name{font-family:'Noto Sans Arabic',sans-serif;}
+
+/* ── APP NAGUSIA ── */
+#app {
+  display:none;max-width:580px;margin:0 auto;
+  padding:2.5rem 1.25rem 5rem;
+}
+.brand{font-family:'Playfair Display',serif;font-style:italic;
+  color:var(--accent);font-size:1rem;display:block;margin-bottom:1.5rem;
+  cursor:pointer;}
 h1{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:400;
   line-height:1.2;margin-bottom:0.4rem;}
 .intro{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:2rem;}
 
-/* GALDERA */
+/* RTL arabierarako */
+.rtl{direction:rtl;text-align:right;}
+.rtl .brand{text-align:right;}
+.rtl h1{font-family:'Noto Sans Arabic',sans-serif;font-style:normal;}
+.rtl .intro{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .gal-q{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .opt-nom{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .opt-sub{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .opt{grid-template-columns:1fr 14px;}
+.rtl .btn{font-family:'Noto Sans Arabic',sans-serif;letter-spacing:0;}
+.rtl .em-t{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .oh-sub{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .oh-txt{font-family:'Noto Sans Arabic',sans-serif;}
+.rtl .sb-tit{font-family:'Noto Sans Arabic',sans-serif;}
+
 .gal-q{font-size:1.05rem;font-weight:400;margin-bottom:1rem;}
 .opts{display:flex;flex-direction:column;gap:0.4rem;}
 .opt{border:1.5px solid var(--border);background:white;padding:0.8rem 1rem;
@@ -44,32 +88,33 @@ h1{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:400;
 .btn:hover{background:var(--accent);border-color:var(--accent);}
 .btn:disabled{opacity:0.3;cursor:not-allowed;}
 
-/* EMAITZA */
 .em{display:none;padding-top:2rem;border-top:2px solid var(--ink);margin-top:0.5rem;}
 .em-k{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;
   text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
-.em-t{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:1.75rem;}
+.em-t{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:1.75rem;line-height:1.3;}
 
-/* EREDU KARTAK — nagusia */
 .ek3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.6rem;margin-bottom:1.5rem;}
 .ek{background:white;border:1.5px solid var(--border);padding:1.1rem 1rem;position:relative;}
 .ek.top{border-width:2px;}
 .ek-tick{position:absolute;top:0.6rem;right:0.7rem;font-size:1rem;color:var(--D);}
+.rtl .ek-tick{right:auto;left:0.7rem;}
 .ek-e{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;
   text-transform:uppercase;margin-bottom:0.3rem;}
 .ek-sol{font-family:'Playfair Display',serif;font-size:1.6rem;line-height:1;margin-bottom:0.2rem;}
 .ek-any{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);}
+.rtl .ek-any{font-family:'Noto Sans Arabic',sans-serif;}
 
-/* DIFERENTZIA */
 .diff{border-left:3px solid var(--D);background:white;
   padding:1rem 1.25rem;margin-bottom:1.5rem;line-height:1.8;}
+.rtl .diff{border-left:none;border-right:3px solid var(--D);}
 .diff-num{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--D);}
 .diff-exp{font-size:0.8rem;color:var(--muted);}
+.rtl .diff-exp{font-family:'Noto Sans Arabic',sans-serif;}
 
-/* NON LAN */
 .lur-sec{margin-bottom:1.5rem;}
 .sec-t{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;
   text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;}
+.rtl .sec-t{font-family:'Noto Sans Arabic',sans-serif;letter-spacing:0;}
 .lur3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.5rem;}
 .lc{background:white;border:0.5px solid var(--border);padding:0.75rem 0.7rem;}
 .lc-e{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;
@@ -77,299 +122,332 @@ h1{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:400;
 .lc-row{display:flex;justify-content:space-between;
   font-family:'IBM Plex Mono',monospace;font-size:0.62rem;margin-bottom:2px;}
 .lc-lur{color:var(--muted);}
-.lc-pct{font-weight:500;}
+.rtl .lc-lur{font-family:'Noto Sans Arabic',sans-serif;font-size:0.7rem;}
 
-/* OHAR METODOLOGIKOAK */
 .oharrak{margin-top:2.5rem;border-top:1px solid var(--border);padding-top:1.5rem;}
 .oh-tit{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;
   text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.rtl .oh-tit{font-family:'Noto Sans Arabic',sans-serif;letter-spacing:0;}
 .oh-bloke{margin-bottom:1.25rem;}
 .oh-sub{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;
   color:var(--ink);margin-bottom:0.35rem;}
 .oh-txt{font-size:0.78rem;color:var(--muted);line-height:1.7;}
 .oh-txt strong{color:var(--ink);font-weight:500;}
+.sb-tit{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;}
 
-.berriz{background:none;border:1px solid var(--border);color:var(--muted);
-  padding:0.35rem 0.9rem;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;
-  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;margin-top:1.5rem;}
-.berriz:hover{border-color:var(--ink);color:var(--ink);}
+.berriz{background:none;border:2px solid var(--ink);color:var(--ink);
+  padding:0.65rem 1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+  margin-top:0rem;margin-bottom:2.5rem;}
+.berriz:hover{background:var(--ink);color:var(--paper);}
+.lang-back{background:none;border:none;color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;
+  text-transform:uppercase;cursor:pointer;margin-bottom:1.5rem;padding:0;}
+.lang-back:hover{color:var(--ink);}
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- PANTAILA 1: HIZKUNTZA AUKERAKETA -->
+<div id="lang-screen">
+  <div class="lang-brand">laino</div>
+  <div class="lang-grid">
+    <button class="lang-btn" data-lang="eus" onclick="setLang('eus')">
+      <span class="lang-name">Euskara</span>
+      <span class="lang-native">Euskal Herria</span>
+    </button>
+    <button class="lang-btn" data-lang="es" onclick="setLang('es')">
+      <span class="lang-name">Español</span>
+      <span class="lang-native">Castellano</span>
+    </button>
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">
+      <span class="lang-name">English</span>
+      <span class="lang-native">English</span>
+    </button>
+    <button class="lang-btn" data-lang="arab" onclick="setLang('arab')">
+      <span class="lang-name" style="font-family:'Noto Sans Arabic',sans-serif;">العربية</span>
+      <span class="lang-native" style="font-family:'Noto Sans Arabic',sans-serif;">عربي</span>
+    </button>
+  </div>
+</div>
+
+<!-- PANTAILA 2: APP -->
+<div id="app">
+  <button class="lang-back" onclick="goBack()">← <span id="back-txt"></span></button>
   <span class="brand">laino</span>
-  <h1>Zein hezkuntza-eredu komeni da nire haurrentzat?</h1>
-  <p class="intro">Galdera bakarra. Erantzuna eurotan.</p>
+  <h1 id="app-h1"></h1>
+  <p class="intro" id="app-intro"></p>
 
   <div id="galdetegia">
-    <div class="gal-q">Zein hizkuntzatan hitz egiten da etxean?</div>
-    <div class="opts">
-      <button class="opt" onclick="sel('euskaraz',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Euskaraz</span>
-          <span class="opt-sub">Etxeko hizkuntza nagusia euskara da</span></span>
-      </button>
-      <button class="opt" onclick="sel('elebietan',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Elebietan — euskara eta gaztelania</span>
-          <span class="opt-sub">Biak erabiltzen dira etxean</span></span>
-      </button>
-      <button class="opt" onclick="sel('gaztelaniaz',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Gaztelaniaz</span>
-          <span class="opt-sub">Nafarroa, Espainia edo Latinoamerika</span></span>
-      </button>
-      <button class="opt" onclick="sel('arabieraz',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Arabieraz edo amazigeraz</span>
-          <span class="opt-sub">Marokoko, Aljeriako eta abarretako familiak</span></span>
-      </button>
-      <button class="opt" onclick="sel('globalak',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Ingelesa, frantsesa edo alemana</span>
-          <span class="opt-sub">Nazioarteko familia, expat</span></span>
-      </button>
-      <button class="opt" onclick="sel('bestea',this)">
-        <div class="opt-dot"></div>
-        <span><span class="opt-nom">Beste hizkuntza bat</span>
-          <span class="opt-sub">Errumaniera, wolof, txinera eta beste</span></span>
-      </button>
-    </div>
-    <button class="btn" id="btn-kal" onclick="kalkulatu()" disabled>Kalkulatu →</button>
+    <div class="gal-q" id="gal-q"></div>
+    <div class="opts" id="opts"></div>
+    <button class="btn" id="btn-kal" onclick="kalkulatu()" disabled></button>
   </div>
 
-  <!-- EMAITZA -->
   <div class="em" id="emaitza">
-    <div class="em-k">Aurreikuspena · nire haurrarentzat</div>
+    <div class="em-k" id="em-k"></div>
     <div class="em-t" id="em-t"></div>
-
     <div class="ek3" id="ek3"></div>
-
     <div class="diff" id="diff"></div>
-
     <div class="lur-sec">
-      <div class="sec-t">Non lan egingo du nire haurrak? — aurreikuspena ereduka</div>
+      <div class="sec-t" id="lur-tit"></div>
       <div class="lur3" id="lur3"></div>
     </div>
+    <button class="berriz" onclick="berriz()" id="berriz-btn"></button>
 
-    <button class="btn" onclick="berriz()" style="margin-bottom:2.5rem;background:none;color:var(--ink);border-color:var(--ink);">← Berriz hasi</button>
-
-    <!-- OHAR METODOLOGIKOAK -->
     <div class="oharrak">
-      <div class="oh-tit">Ohar metodologikoak</div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">1. Zer neurtzen du tresna honek?</div>
-        <div class="oh-txt">
-          Tresna honek galdera ekonomiko zehatz bat erantzuten du:
-          <strong>Iruñeko eremu mistoan, hezkuntza-ereduaren aukerak zenbat eragiten du
-          haurraren etorkizuneko soldatan?</strong>
-          Ez du neurtzen ereduen kalitate pedagogikoa, ez kultura-transmisioa,
-          ez identitate-garapena. Neurri bakarra: lan-merkatuko etekin ekonomikoa,
-          eurotan, 35 lan-urtetan metatuta.
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">2. Ereduak eta hizkuntz gaitasuna</div>
-        <div class="oh-txt">
-          Nafarroako eremu mistoan hiru eredu daude eskola publikoan:
-          <strong>D eredua</strong> (irakaskuntza euskaraz), <strong>A eredua</strong>
-          (gaztelaniaz, euskara asignatura gisa, 4-5 ordu astean) eta
-          <strong>G eredua</strong> (gaztelaniaz, euskararik gabe).
-          <br><br>
-          Eredu bakoitzak C1 maila lortzeko probabilitate desberdina ematen dio haurrari
-          eskola amaieran. Probabilitate hauek ez dira Nafarroako Gobernuak argitaratutako
-          datu ofizialak — <strong>hutsune metodologiko garrantzitsua da hau</strong>,
-          entsaio honetan behin eta berriro azpimarratzen dena. Estimazioak iturri
-          hauetatik eratorri dira: Kontseiluaren txostena (2023), ISEI-IVEIren ebaluazioak,
-          Lasagabaster (2003) eta Sierra &amp; Olaziregi (1990-1996) ikerketa-ildotik.
-          <br><br>
-          D ereduak C1 euskara lortzeko probabilitate askoz handiagoa ematen du —
-          baina ez automatikoki. <strong>Etxeko hizkuntzak erabakigarria</strong> den efektua du:
-          etxean euskaraz hitz egiten duten haurrek D ereduan C1 lortzeko
-          %88 probabilitatea dute (estimatua); etxean arabieraz hitz egiten dutenek %38.
-          Hori ez da diskriminazioa — hizkuntza-esposizioak zenbaki-logikarekiko jarraitzen du.
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">3. Hizkuntza-prima lan-merkatuan</div>
-        <div class="oh-txt">
-          C1 euskarak bi motatako prima ematen du:
-          <br><br>
-          <strong>a) Plaza-sarbide prima.</strong> Nafarroako OPEetan (oposizioetan),
-          2019ko deialdian irakaskuntzan, %43,7 plazek euskara-profila zuten (UGT 2019).
-          Hau da: euskara gabe, plaza horietara ezin da aurkeztu.
-          Ez da soldata-prima — sarbide-prima da. Lehiakide-kopuru txikiagoan lehiatzen da.
-          <br><br>
-          <strong>b) Lurralde-prima.</strong> EAEko lan-merkatua irekitzen da.
-          INE EAES 2023 datuetan, EAEko batez besteko soldata urtekoa 33.505€ da,
-          Nafarroakoa 31.068€. Diferentzia: 2.437€/urte. 35 urtetan, %3 deskontu-tasarekin,
-          VPN diferentzia ~55.000€ da lurralde-aldaketa hutsagatik.
-          D eredukoek EAEra joateko probabilitate handiagoa dute — C1 EUS bidez
-          EAEko plaza gehiago eskuragarri daudelako.
-          <br><br>
-          <strong>Ingelesaren prima,</strong> konparaketarako: Preply/BSBI ikerketetan
-          AEBn %9,6 prima neurtzen da bilingüe-lanpostuetan. Espainian murritzagoa da
-          (%6-8 estimatua), eta Nafarroa/EAEn are txikiagoa, multinazional gutxi daudelako.
-          Salbuespen bat: enpresa pribatuan ingelesak pisu handiagoa du.
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">4. Mugikortasun-matrizea</div>
-        <div class="oh-txt">
-          Iruñeko eremu mistotik abiatuta, haur batek non lan egingo duen ez dakigu —
-          baina estatistikoki aurreikus daiteke. INE EMCR 2021-2022 datuetan,
-          Nafarroatik EAErako migrazio-fluxua garrantzitsua da, eta EAEkoa Nafarroarako
-          ere bai. Fluxu honek hizkuntz gaitasunarekin korrelazioa du, baina
-          <strong>kausalitate-norabidea ez dago neurtu</strong>:
-          D eredukoek EAEra joaten direlako C1 daukatelako, edo C1 daukatela EAEra joaten
-          direlako? Ziurrenik biak.
-          <br><br>
-          Mugikortasun-pisua ereduka:
-          D: Nafarroa %58, EAE %30, Iparraldea %5, Madril %4.
-          G: Nafarroa %60, EAE %10, Iparraldea %1, Madril %20.
-          Diferentzia nagusia: D eredukoek EAEra joateko hiru aldiz probabilitate handiagoa
-          dute G eredukoekin alderatuta.
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">5. Zer ez du neurtzen tresna honek</div>
-        <div class="oh-txt">
-          <strong>Porrot-arriskua.</strong> D ereduan, etxean euskara ez den hizkuntza
-          batean hitz egiten duten haurren porrot-tasa handiagoa da A eta G ereduekiko.
-          Tresna honek ez du porrot-arriskua kalkuluan sartzen — hori alderantzizko norantzan
-          lan egingo luke eta emaitza txikiagoak eman. Bereziki garrantzitsua da
-          familia magrebiar eta beste jatorri batzuentzat.
-          <br><br>
-          <strong>Soldata ez-monetarioak.</strong> Lan-aukeren aniztasuna, lan-baldintzen
-          kalitatea, bizilekuaren aukeraketa-askatasuna — hauek guztiak hizkuntza-gaitasunak
-          baldintzatzen ditu baina ez daude kalkulu honetan.
-          <br><br>
-          <strong>Politika-aldaketak.</strong> Nafarroako hizkuntza-politika aldatu daiteke.
-          OPEetako plaza-proportzioa ere bai. Eredu hau 2024-2026ko egoerari aplikatzen zaio.
-          <br><br>
-          <strong>Ikastola eta itunpeko eskolak.</strong> Tresna honek eskola publikoa
-          bakarrik hartzen du kontuan. Ikastoletan eta itunpeko ikastetxeetan emaitzak
-          desberdinak izan daitezke.
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">6. Erregresio formal baten falta</div>
-        <div class="oh-txt">
-          Tresna hau <strong>aditu-eredua da, ez erregresio formal bat.</strong>
-          Koefiziente guztiak (hizkuntza-prima, C1 probabilitateak, mugikortasun-pisua)
-          estimazioak dira — datuetan OLS bidez estimatu gabeak.
-          <br><br>
-          Erregresio formal baten aldeko Mincer ekuazioa honelakoa izango litzateke:
-          <br>
-          <code style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;
-            background:#f0ebe0;padding:0.4rem 0.6rem;display:block;margin:0.5rem 0;
-            line-height:1.6;">
-            log(soldata) = α + β₁·C1_EUS + β₂·C1_EN + β₃·esperientzia + β₄·hezkuntza + ε
-          </code>
-          Hori kalkulatzeko beharko genituzke: (1) D/A/G ereduka bereizitako EBAU emaitzak
-          Nafarroan — ez daude argitaratuta; (2) ikasle bakoitzaren lan-ibilbidearen jarraipena
-          — ez da egiten; (3) hizkuntza-gaitasunaren neurri objetiboa lan-merkatuan sartzean —
-          existitzen ez dena. <strong>Hutsune hau bera da tesiaren argudio nagusienetako bat:
-          datu hauek bildu ez izana erabaki politikoa da, ez ausazko hutsunea.</strong>
-        </div>
-      </div>
-
-      <div class="oh-bloke">
-        <div class="oh-sub">7. Iturri nagusiak</div>
-        <div class="oh-txt">
-          · INE EAES 2023 — Encuesta Anual de Estructura Salarial (soldatak lurraldeka)<br>
-          · INE EMCR 2021-2022 — Estadística de Migraciones y Cambios de Residencia<br>
-          · OPE Maestros Navarra 2019 — %43,7 plaza euskaldun (UGT Navarra, 2019)<br>
-          · Kontseiluaren txostena 2023 — Hezkuntzaren egoera Euskal Herrian<br>
-          · Lasagabaster, D. (2003) — Multilingualism, language attitudes and language policy<br>
-          · Sierra, J. &amp; Olaziregi, I. (1990-1996) — EIFE ikerketa-ildoa, EAE<br>
-          · Preply/BSBI (2023) — Bilingual career &amp; salary study<br>
-          · E-MAITEN — Iruñeko Hizkuntza Ekologia (Valencia, 2026)<br>
-          · Business Case for Language Policy in Navarre 2026-2030 (Valencia, 2026)
-        </div>
-      </div>
-
+      <div class="oh-tit" id="oh-tit"></div>
+      <div id="oh-content"></div>
     </div>
-
   </div>
 </div>
 
 <script>
-const DAT=[{"kategoria": "euskaraz", "eredua": "D", "p_eus": 0.88, "p_en": 0.38, "sol_esperatua": 35820, "vpn_tot": 125066, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "euskaraz", "eredua": "A", "p_eus": 0.55, "p_en": 0.4, "sol_esperatua": 34146, "vpn_tot": 89083, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "euskaraz", "eredua": "G", "p_eus": 0.45, "p_en": 0.42, "sol_esperatua": 33578, "vpn_tot": 76874, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "elebietan", "eredua": "D", "p_eus": 0.8, "p_en": 0.36, "sol_esperatua": 35479, "vpn_tot": 117738, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "elebietan", "eredua": "A", "p_eus": 0.42, "p_en": 0.38, "sol_esperatua": 33710, "vpn_tot": 79711, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "elebietan", "eredua": "G", "p_eus": 0.3, "p_en": 0.4, "sol_esperatua": 33164, "vpn_tot": 67977, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "gaztelaniaz", "eredua": "D", "p_eus": 0.52, "p_en": 0.32, "sol_esperatua": 34357, "vpn_tot": 93621, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "gaztelaniaz", "eredua": "A", "p_eus": 0.11, "p_en": 0.35, "sol_esperatua": 32712, "vpn_tot": 58284, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "gaztelaniaz", "eredua": "G", "p_eus": 0.03, "p_en": 0.37, "sol_esperatua": 32433, "vpn_tot": 52284, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "arabieraz", "eredua": "D", "p_eus": 0.38, "p_en": 0.22, "sol_esperatua": 33606, "vpn_tot": 77479, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "arabieraz", "eredua": "A", "p_eus": 0.07, "p_en": 0.24, "sol_esperatua": 32327, "vpn_tot": 49998, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "arabieraz", "eredua": "G", "p_eus": 0.02, "p_en": 0.26, "sol_esperatua": 32136, "vpn_tot": 45891, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "globalak", "eredua": "D", "p_eus": 0.5, "p_en": 0.75, "sol_esperatua": 35305, "vpn_tot": 113991, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "globalak", "eredua": "A", "p_eus": 0.2, "p_en": 0.78, "sol_esperatua": 34022, "vpn_tot": 86421, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "globalak", "eredua": "G", "p_eus": 0.1, "p_en": 0.8, "sol_esperatua": 33671, "vpn_tot": 78888, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "bestea", "eredua": "D", "p_eus": 0.33, "p_en": 0.2, "sol_esperatua": 33375, "vpn_tot": 72516, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "bestea", "eredua": "A", "p_eus": 0.06, "p_en": 0.22, "sol_esperatua": 32249, "vpn_tot": 48317, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "bestea", "eredua": "G", "p_eus": 0.02, "p_en": 0.24, "sol_esperatua": 32086, "vpn_tot": 44823, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}];
+const DAT = [{"kategoria": "euskaraz", "eredua": "D", "p_eus": 0.88, "p_en": 0.38, "sol_esperatua": 35820, "vpn_tot": 125066, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "euskaraz", "eredua": "A", "p_eus": 0.55, "p_en": 0.4, "sol_esperatua": 34146, "vpn_tot": 89083, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "euskaraz", "eredua": "G", "p_eus": 0.45, "p_en": 0.42, "sol_esperatua": 33578, "vpn_tot": 76874, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "elebietan", "eredua": "D", "p_eus": 0.8, "p_en": 0.36, "sol_esperatua": 35479, "vpn_tot": 117738, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "elebietan", "eredua": "A", "p_eus": 0.42, "p_en": 0.38, "sol_esperatua": 33710, "vpn_tot": 79711, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "elebietan", "eredua": "G", "p_eus": 0.3, "p_en": 0.4, "sol_esperatua": 33164, "vpn_tot": 67977, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "gaztelaniaz", "eredua": "D", "p_eus": 0.52, "p_en": 0.32, "sol_esperatua": 34357, "vpn_tot": 93621, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "gaztelaniaz", "eredua": "A", "p_eus": 0.11, "p_en": 0.35, "sol_esperatua": 32712, "vpn_tot": 58284, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "gaztelaniaz", "eredua": "G", "p_eus": 0.03, "p_en": 0.37, "sol_esperatua": 32433, "vpn_tot": 52284, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "arabieraz", "eredua": "D", "p_eus": 0.38, "p_en": 0.22, "sol_esperatua": 33606, "vpn_tot": 77479, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "arabieraz", "eredua": "A", "p_eus": 0.07, "p_en": 0.24, "sol_esperatua": 32327, "vpn_tot": 49998, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "arabieraz", "eredua": "G", "p_eus": 0.02, "p_en": 0.26, "sol_esperatua": 32136, "vpn_tot": 45891, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "globalak", "eredua": "D", "p_eus": 0.5, "p_en": 0.75, "sol_esperatua": 35305, "vpn_tot": 113991, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "globalak", "eredua": "A", "p_eus": 0.2, "p_en": 0.78, "sol_esperatua": 34022, "vpn_tot": 86421, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "globalak", "eredua": "G", "p_eus": 0.1, "p_en": 0.8, "sol_esperatua": 33671, "vpn_tot": 78888, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}, {"kategoria": "bestea", "eredua": "D", "p_eus": 0.33, "p_en": 0.2, "sol_esperatua": 33375, "vpn_tot": 72516, "lur_ban": {"Nafarroa": 58, "EAE": 30, "Iparraldea": 5, "Madril": 4, "Beste": 3}}, {"kategoria": "bestea", "eredua": "A", "p_eus": 0.06, "p_en": 0.22, "sol_esperatua": 32249, "vpn_tot": 48317, "lur_ban": {"Nafarroa": 62, "EAE": 18, "Iparraldea": 2, "Madril": 12, "Beste": 6}}, {"kategoria": "bestea", "eredua": "G", "p_eus": 0.02, "p_en": 0.24, "sol_esperatua": 32086, "vpn_tot": 44823, "lur_ban": {"Nafarroa": 60, "EAE": 10, "Iparraldea": 1, "Madril": 20, "Beste": 9}}];
+
+const LURS_DISPLAY = {
+  eus: {Nafarroa:"Nafarroa", EAE:"EAE", Iparraldea:"Iparraldea", Madril:"Madril", Beste:"Beste"},
+  es:  {Nafarroa:"Navarra",  EAE:"País Vasco", Iparraldea:"Iparraldea", Madril:"Madrid", Beste:"Otros"},
+  en:  {Nafarroa:"Navarre",  EAE:"Basque Country", Iparraldea:"N. Basque Country", Madril:"Madrid", Beste:"Other"},
+  arab:{Nafarroa:"نافارا",   EAE:"إقليم الباسك", Iparraldea:"الباسك الشمالي", Madril:"مدريد", Beste:"أخرى"},
+};
+
+const TX = {
+  eus: {
+    back: "Hizkuntza aldatu",
+    h1: "Zein hezkuntza-eredu komeni da nire haurrentzat?",
+    intro: "Galdera bakarra. Erantzuna eurotan.",
+    galq: "Zein hizkuntzatan hitz egiten da etxean?",
+    kalk: "KALKULATU →",
+    opts: [
+      {k:"euskaraz",    nom:"Euskaraz",                        sub:"Etxeko hizkuntza nagusia euskara da"},
+      {k:"elebietan",   nom:"Elebietan — euskara eta gaztelania", sub:"Biak erabiltzen dira etxean"},
+      {k:"gaztelaniaz", nom:"Gaztelaniaz",                     sub:"Nafarroa, Espainia edo Latinoamerika"},
+      {k:"arabieraz",   nom:"Arabieraz edo amazigeraz",        sub:"Marokoko, Aljeriako eta abarretako familiak"},
+      {k:"globalak",    nom:"Ingelesa, frantsesa edo alemana", sub:"Nazioarteko familia, expat"},
+      {k:"bestea",      nom:"Beste hizkuntza bat",             sub:"Errumaniera, wolof, txinera eta beste"},
+    ],
+    emk: "Aurreikuspena · nire haurrarentzat",
+    difexp: "Urteko diferentzia D eta G ereduen artean.",
+    difexp2: "35 lan-urtetan metatuta:",
+    lurTit: "Non lan egingo du nire haurrak? — aurreikuspena",
+    berriz: "← Berriz hasi",
+    anyurte: "urteko aurreikuspena",
+    hoberena: "Hoberena ✓",
+    ohTit: "Ohar metodologikoak",
+    ohBlokeak: [
+      {sub:"Zer neurtzen du?", txt:"D, A eta G hezkuntza-ereduek hizkuntza-gaitasun desberdina ematen diote haurrari. C1 euskarak lan-merkatuan abantaila ematen du: OPEetako plazetan (%43,7ak euskara eskatzen du) eta EAEko lan-merkatu osoan. EAEk <strong>2.437€/urte gehiago</strong> ematen du Nafarroak baino (INE EAES 2023)."},
+      {sub:"Zer da "aurreikusitako soldata"?", txt:"Ez da soldata zehatz bat — <strong>probabilitate-batezbestekoa</strong> da. C1 lortzeko probabilitatea × hizkuntza-prima × lurraldea (mugikortasuna barne)."},
+      {sub:"Mugak", txt:"Aditu-eredua da. Nafarroako Gobernuak ez ditu EBAU emaitzak argitaratzen ereduka bereizita. Iturri nagusiak: INE EAES 2023 · INE EMCR 2022 · OPE Maestros Navarra 2019 · Kontseilua 2023 · Lasagabaster 2003."},
+    ],
+    katIzen: {euskaraz:"Etxean euskaraz", elebietan:"Etxean elebietan", gaztelaniaz:"Etxean gaztelaniaz", arabieraz:"Etxean arabieraz / amazigeraz", globalak:"Etxean ingelesa / frantsesa / alemana", bestea:"Etxean beste hizkuntza bat"},
+  },
+  es: {
+    back: "Cambiar idioma",
+    h1: "¿Qué modelo educativo conviene a mi hijo o hija?",
+    intro: "Una sola pregunta. La respuesta en euros.",
+    galq: "¿En qué idioma se habla en casa?",
+    kalk: "CALCULAR →",
+    opts: [
+      {k:"euskaraz",    nom:"En euskera",                          sub:"El euskera es la lengua principal del hogar"},
+      {k:"elebietan",   nom:"Bilingüe — euskera y castellano",     sub:"Se usan ambas lenguas en casa"},
+      {k:"gaztelaniaz", nom:"En castellano",                       sub:"Navarra, España o Latinoamérica"},
+      {k:"arabieraz",   nom:"En árabe o amazigh (bereber)",        sub:"Familias de Marruecos, Argelia y otros países"},
+      {k:"globalak",    nom:"En inglés, francés o alemán",         sub:"Familias internacionales, expats"},
+      {k:"bestea",      nom:"Otro idioma",                         sub:"Rumano, wolof, chino y otros"},
+    ],
+    emk: "Previsión económica · para mi hijo o hija",
+    difexp: "Diferencia anual entre modelo D y modelo G.",
+    difexp2: "Acumulado en 35 años de carrera:",
+    lurTit: "¿Dónde trabajará mi hijo o hija? — previsión por modelo",
+    berriz: "← Volver a empezar",
+    anyurte: "salario anual previsto",
+    hoberena: "El mejor ✓",
+    ohTit: "Notas metodológicas",
+    ohBlokeak: [
+      {sub:"¿Qué mide esta herramienta?", txt:"Los modelos D, A y G generan distintas probabilidades de alcanzar el nivel C1 de euskera. El C1 de euskera abre plazas en oposiciones (el 43,7% de las plazas de magisterio en Navarra exigen euskera, OPE 2019) y todo el mercado laboral del País Vasco. El País Vasco paga <strong>2.437€/año más</strong> que Navarra (INE EAES 2023)."},
+      {sub:"¿Qué es el "salario previsto"?", txt:"No es un salario exacto — es una <strong>media ponderada por probabilidades</strong>: probabilidad de alcanzar C1 × prima lingüística × territorio (incluida la movilidad laboral)."},
+      {sub:"Limitaciones", txt:"Es un modelo experto, no una regresión formal. El Gobierno de Navarra no publica los resultados de la EBAU por modelo educativo. Fuentes: INE EAES 2023 · INE EMCR 2022 · OPE Maestros Navarra 2019 · Kontseilua 2023 · Lasagabaster 2003."},
+    ],
+    katIzen: {euskaraz:"En casa: euskera", elebietan:"En casa: bilingüe", gaztelaniaz:"En casa: castellano", arabieraz:"En casa: árabe / amazigh", globalak:"En casa: inglés / francés / alemán", bestea:"En casa: otro idioma"},
+  },
+  en: {
+    back: "Change language",
+    h1: "Which school model is best for my child?",
+    intro: "One question. The answer in euros.",
+    galq: "What language is spoken at home?",
+    kalk: "CALCULATE →",
+    opts: [
+      {k:"euskaraz",    nom:"Basque",                             sub:"Basque is the main home language"},
+      {k:"elebietan",   nom:"Bilingual — Basque and Spanish",     sub:"Both languages are used at home"},
+      {k:"gaztelaniaz", nom:"Spanish",                            sub:"Navarre, Spain or Latin America"},
+      {k:"arabieraz",   nom:"Arabic or Amazigh (Berber)",         sub:"Families from Morocco, Algeria and other countries"},
+      {k:"globalak",    nom:"English, French or German",          sub:"International families, expats"},
+      {k:"bestea",      nom:"Another language",                   sub:"Romanian, Wolof, Chinese and others"},
+    ],
+    emk: "Economic forecast · for my child",
+    difexp: "Annual salary difference between model D and model G.",
+    difexp2: "Accumulated over 35 working years:",
+    lurTit: "Where will my child work? — forecast by model",
+    berriz: "← Start again",
+    anyurte: "forecast annual salary",
+    hoberena: "Best ✓",
+    ohTit: "Methodological notes",
+    ohBlokeak: [
+      {sub:"What does this tool measure?", txt:"Models D, A and G generate different probabilities of reaching C1 Basque. C1 Basque opens civil service positions (43.7% of teaching posts in Navarre require Basque, OPE 2019) and the entire Basque Country labour market. The Basque Country pays <strong>€2,437/year more</strong> than Navarre (INE EAES 2023)."},
+      {sub:"What is the "forecast salary"?", txt:"It is not an exact salary — it is a <strong>probability-weighted average</strong>: probability of reaching C1 × language premium × territory (including labour mobility)."},
+      {sub:"Limitations", txt:"This is an expert model, not a formal regression. The Navarre Government does not publish exam results by school model. Sources: INE EAES 2023 · INE EMCR 2022 · OPE Maestros Navarra 2019 · Kontseilua 2023 · Lasagabaster 2003."},
+    ],
+    katIzen: {euskaraz:"At home: Basque", elebietan:"At home: bilingual", gaztelaniaz:"At home: Spanish", arabieraz:"At home: Arabic / Amazigh", globalak:"At home: English / French / German", bestea:"At home: other language"},
+  },
+  arab: {
+    back: "تغيير اللغة",
+    h1: "أي نموذج تعليمي يناسب طفلي؟",
+    intro: "سؤال واحد. الإجابة بالأورو.",
+    galq: "ما اللغة المستخدمة في المنزل؟",
+    kalk: "← احسب",
+    opts: [
+      {k:"euskaraz",    nom:"اللغة الباسكية",                     sub:"اللغة الرئيسية في المنزل هي الباسكية"},
+      {k:"elebietan",   nom:"ثنائي اللغة — باسكي وإسباني",        sub:"تُستخدم اللغتان في المنزل"},
+      {k:"gaztelaniaz", nom:"الإسبانية",                          sub:"نافارا، إسبانيا أو أمريكا اللاتينية"},
+      {k:"arabieraz",   nom:"العربية أو الأمازيغية",              sub:"عائلات من المغرب والجزائر وغيرها"},
+      {k:"globalak",    nom:"الإنجليزية أو الفرنسية أو الألمانية", sub:"عائلات دولية"},
+      {k:"bestea",      nom:"لغة أخرى",                           sub:"الرومانية، الولوف، الصينية وغيرها"},
+    ],
+    emk: "التوقعات الاقتصادية · لطفلي",
+    difexp: "الفرق السنوي بين النموذج D والنموذج G.",
+    difexp2: "المتراكم خلال 35 سنة عمل:",
+    lurTit: "أين سيعمل طفلي؟ — توقعات حسب النموذج",
+    berriz: "→ ابدأ من جديد",
+    anyurte: "الراتب السنوي المتوقع",
+    hoberena: "الأفضل ✓",
+    ohTit: "ملاحظات منهجية",
+    ohBlokeak: [
+      {sub:"ماذا تقيس هذه الأداة?", txt:"تولّد النماذج D وA وG احتمالات مختلفة للوصول إلى مستوى C1 في الباسكية. يفتح C1 الباسكي مناصب في المسابقات الحكومية (43.7% من مناصب التعليم في نافارا تشترط الباسكية) وكامل سوق العمل في إقليم الباسك. يدفع إقليم الباسك <strong>2,437 أورو/سنة أكثر</strong> من نافارا."},
+      {sub:"ما هو "الراتب المتوقع"?", txt:"ليس راتباً محدداً — بل هو <strong>متوسط مرجّح بالاحتمالات</strong>: احتمال بلوغ C1 × العلاوة اللغوية × المنطقة الجغرافية."},
+      {sub:"القيود", txt:"هذا نموذج خبراء، وليس انحداراً رسمياً. لا تنشر حكومة نافارا نتائج الامتحانات مصنّفةً حسب النموذج التعليمي. المصادر: INE EAES 2023 · OPE Maestros Navarra 2019 · Lasagabaster 2003."},
+    ],
+    katIzen: {euskaraz:"في المنزل: باسكية", elebietan:"في المنزل: ثنائي اللغة", gaztelaniaz:"في المنزل: إسبانية", arabieraz:"في المنزل: عربية / أمازيغية", globalak:"في المنزل: إنجليزية / فرنسية / ألمانية", bestea:"في المنزل: لغة أخرى"},
+  },
+};
+
 const COL={D:"#1a5c38",A:"#3d5a80",G:"#b5451b"};
 const LURS=["Nafarroa","EAE","Iparraldea","Madril","Beste"];
-const KAT={
-  euskaraz:"Etxean euskaraz",elebietan:"Etxean elebietan",
-  gaztelaniaz:"Etxean gaztelaniaz",arabieraz:"Etxean arabieraz / amazigeraz",
-  globalak:"Etxean ingelesa / frantsesa / alemana",bestea:"Etxean beste hizkuntza bat",
-};
-let katAkt=null;
 
-function sel(k,btn){
-  katAkt=k;
-  document.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  document.getElementById('btn-kal').disabled=false;
+let langAkt = null;
+let katAkt = null;
+
+function setLang(lang) {
+  langAkt = lang;
+  document.getElementById('lang-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  const t = TX[lang];
+  const isRTL = lang === 'arab';
+  const appEl = document.getElementById('app');
+
+  if(isRTL) appEl.classList.add('rtl');
+  else appEl.classList.remove('rtl');
+
+  document.documentElement.lang = lang === 'arab' ? 'ar' : lang === 'eus' ? 'eu' : lang === 'es' ? 'es' : 'en';
+
+  document.getElementById('back-txt').textContent = t.back;
+  document.getElementById('app-h1').textContent = t.h1;
+  document.getElementById('app-intro').textContent = t.intro;
+  document.getElementById('gal-q').textContent = t.galq;
+  document.getElementById('btn-kal').textContent = t.kalk;
+  document.getElementById('oh-tit').textContent = t.ohTit;
+
+  // Aukerak
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = t.opts.map(o => `
+    <button class="opt" onclick="sel('${o.k}',this)">
+      ${isRTL
+        ? `<span><span class="opt-nom">${o.nom}</span><span class="opt-sub">${o.sub}</span></span><div class="opt-dot"></div>`
+        : `<div class="opt-dot"></div><span><span class="opt-nom">${o.nom}</span><span class="opt-sub">${o.sub}</span></span>`
+      }
+    </button>`).join('');
+
+  // Oharrak
+  document.getElementById('oh-content').innerHTML = t.ohBlokeak.map(b =>
+    `<div class="oh-bloke"><div class="oh-sub">${b.sub}</div><div class="oh-txt">${b.txt}</div></div>`
+  ).join('');
+
+  katAkt = null;
+  document.getElementById('btn-kal').disabled = true;
+  document.getElementById('galdetegia').style.display = 'block';
+  document.getElementById('emaitza').style.display = 'none';
 }
-function get(k,e){return DAT.find(r=>r.kategoria===k&&r.eredua===e);}
-function fmtS(n){return (Math.round(n/100)*100).toLocaleString('eu');}
-function fmtK(n){return Math.round(n/1000);}
 
-function kalkulatu(){
-  const kat=katAkt;
-  const D=get(kat,'D'),A=get(kat,'A'),G=get(kat,'G');
-  const maxS=Math.max(D.sol_esperatua,A.sol_esperatua,G.sol_esperatua);
+function goBack() {
+  document.getElementById('lang-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  katAkt = null;
+}
 
-  document.getElementById('galdetegia').style.display='none';
-  document.getElementById('emaitza').style.display='block';
-  document.getElementById('em-t').textContent=KAT[kat];
+function sel(k, btn) {
+  katAkt = k;
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('btn-kal').disabled = false;
+}
+
+function get(k, e) { return DAT.find(r => r.kategoria === k && r.eredua === e); }
+function fmtS(n) { return (Math.round(n/100)*100).toLocaleString(); }
+function fmtK(n) { return Math.round(n/1000); }
+
+function kalkulatu() {
+  const t = TX[langAkt];
+  const lursD = LURS_DISPLAY[langAkt];
+  const kat = katAkt;
+  const D = get(kat,'D'), A = get(kat,'A'), G = get(kat,'G');
+  const maxS = Math.max(D.sol_esperatua, A.sol_esperatua, G.sol_esperatua);
+
+  document.getElementById('galdetegia').style.display = 'none';
+  document.getElementById('emaitza').style.display = 'block';
+  document.getElementById('em-k').textContent = t.emk;
+  document.getElementById('em-t').textContent = t.katIzen[kat];
+  document.getElementById('lur-tit').textContent = t.lurTit;
+  document.getElementById('berriz-btn').textContent = t.berriz;
 
   // Kartak
-  document.getElementById('ek3').innerHTML=['D','A','G'].map(e=>{
-    const r={D,A,G}[e], top=r.sol_esperatua===maxS;
+  document.getElementById('ek3').innerHTML = ['D','A','G'].map(e => {
+    const r = {D,A,G}[e], top = r.sol_esperatua === maxS;
     return `<div class="ek${top?' top':''}" style="${top?'border-color:'+COL[e]:''}">
-      ${top?'<span class="ek-tick">✓</span>':''}
-      <div class="ek-e" style="color:${COL[e]}">${e} eredua</div>
+      ${top?`<span class="ek-tick">✓</span>`:''}
+      <div class="ek-e" style="color:${COL[e]}">${e}</div>
       <div class="ek-sol" style="color:${COL[e]}">${fmtS(r.sol_esperatua)}€</div>
-      <div class="ek-any">urteko aurreikuspena</div>
+      <div class="ek-any">${t.anyurte}</div>
     </div>`;
   }).join('');
 
   // Diferentzia
-  const dS=D.sol_esperatua-G.sol_esperatua;
-  const dV=D.vpn_tot-G.vpn_tot;
-  document.getElementById('diff').innerHTML=`
-    <div class="diff-num">+${fmtS(dS)}€ / urte</div>
-    <div class="diff-exp">
-      D eta G ereduen arteko diferentzia urtero.<br>
-      35 lan-urtetan metatuta: <strong>+${fmtK(dV)}k€</strong> gehiago.
-    </div>`;
+  const dS = D.sol_esperatua - G.sol_esperatua;
+  const dV = D.vpn_tot - G.vpn_tot;
+  document.getElementById('diff').innerHTML = `
+    <div class="diff-num">+${fmtS(dS)}€ / ${langAkt==='arab'?'سنة':langAkt==='es'?'año':langAkt==='en'?'year':'urte'}</div>
+    <div class="diff-exp">${t.difexp}<br>${t.difexp2} <strong>+${fmtK(dV)}k€</strong></div>`;
 
   // Non lan
-  document.getElementById('lur3').innerHTML=['D','A','G'].map(e=>{
-    const r={D,A,G}[e];
+  document.getElementById('lur3').innerHTML = ['D','A','G'].map(e => {
+    const r = {D,A,G}[e];
     return `<div class="lc">
-      <div class="lc-e" style="color:${COL[e]}">${e} eredua</div>
-      ${LURS.map(l=>`<div class="lc-row">
-        <span class="lc-lur">${l}</span>
-        <span class="lc-pct" style="color:${COL[e]}">${r.lur_ban[l]}%</span>
+      <div class="lc-e" style="color:${COL[e]}">${e}</div>
+      ${LURS.map(l => `<div class="lc-row">
+        <span class="lc-lur">${lursD[l]}</span>
+        <span style="color:${COL[e]};font-weight:500;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;">${r.lur_ban[l]}%</span>
       </div>`).join('')}
     </div>`;
   }).join('');
 }
 
-function berriz(){
-  katAkt=null;
-  document.getElementById('galdetegia').style.display='block';
-  document.getElementById('emaitza').style.display='none';
-  document.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('btn-kal').disabled=true;
+function berriz() {
+  katAkt = null;
+  document.getElementById('galdetegia').style.display = 'block';
+  document.getElementById('emaitza').style.display = 'none';
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+  document.getElementById('btn-kal').disabled = true;
 }
 </script>
 </body>
